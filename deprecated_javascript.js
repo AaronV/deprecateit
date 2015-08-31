@@ -1,14 +1,15 @@
-var deprecatedStringFunctions = [
+var stringMethods = [
   "blank",
-  "underscore"
+  "underscore",
+  "camelize"
 ];
 
-var prototypeStringFunctions = new Object;
+var savedMethods = new Object;
 
-function storePrototypeFunctions(functionList) {
+function savePrototypeMethods(functionList) {
   for (i = 0; i < functionList.length; i++) {
     var funcName = functionList[i];
-    prototypeStringFunctions[funcName] = String.prototype[funcName];
+    savedMethods[funcName] = String.prototype[funcName];
   }
 }
 
@@ -16,42 +17,24 @@ function deprecatedWarning(funcName) {
   console.log("\"" + funcName + "\" is deprecated.")
 }
 
-function generateDeprecatedFunction(funcName) {
-
-}
-
-storePrototypeFunctions(deprecatedStringFunctions);
+savePrototypeMethods(stringMethods);
 
 Object.extend(String.prototype, (function() {
-  function blank() {
-    deprecatedWarning("blank");
-    return prototypeStringFunctions.blank.call(this);
+  function deprecatedFunction(funcName) {
+    return function() {
+      deprecatedWarning(funcName);
+      return savedMethods[funcName].call(this);
+    };
   }
 
-  function underscore() {
-    deprecatedWarning("underscore");
-    return prototypeStringFunctions.underscore.call(this);
+  var output = new Object;
+  for (i = 0; i < stringMethods.length; i++) {
+    funcName = stringMethods[i];
+    output[funcName] = deprecatedFunction.call(this, funcName);
   }
-
-  return {
-    blank: blank,
-    underscore: underscore
-  };
-
-  // var output = new Object;
-  //
-  // for (i = 0; i < deprecatedStringFunctions.length; i++) {
-  //   var funcName = deprecatedStringFunctions[i];
-  //
-  //   console.log("replacing " + funcName);
-  //
-  //   function deprecatedFunction() {
-  //     deprecatedWarning(funcName);
-  //     return prototypeStringFunctions[funcName].call(this);
-  //   }
-  //
-  //   output[funcName] = deprecatedFunction;
-  // }
-  //
-  // return output
+  return output;
 })());
+
+
+console.log("watWat".blank());
+console.log("watWat".underscore());
