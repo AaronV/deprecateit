@@ -16,6 +16,10 @@ function deprecatedWarning(funcName) {
   console.log("\"" + funcName + "\" is deprecated.")
 }
 
+function generateDeprecatedFunction(funcName) {
+
+}
+
 storePrototypeFunctions(deprecatedStringFunctions);
 
 Object.extend(String.prototype, (function() {
@@ -24,8 +28,14 @@ Object.extend(String.prototype, (function() {
     return prototypeStringFunctions.blank.call(this);
   }
 
+  function underscore() {
+    deprecatedWarning("underscore");
+    return prototypeStringFunctions.underscore.call(this);
+  }
+
   return {
-    blank: blank
+    blank: blank,
+    underscore: underscore
   };
 
   // var output = new Object;
